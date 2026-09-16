@@ -1,0 +1,25 @@
+{
+  "project_root": "A:\\_BioGeo\\liuxianx\\phenology_project",
+  "raw_root": "A:\\_BioGeo\\liuxianx\\Co_authors\\ana\\output\\MODIS_EU_EVI\\2001_2025",
+  "gdalinfo": "C:\\OSGeo4W\\bin\\gdalinfo.exe",
+  "ogr2ogr": "C:\\OSGeo4W\\bin\\ogr2ogr.exe",
+  "evi": {
+    "scale_factor": 1.0,
+    "scaling_evidence": "Float32 source values and overview-sampled range -0.2 to 1.0",
+    "expected_practical_min": -1.0,
+    "expected_practical_max": 1.0
+  },
+  "inventory": {
+    "extensions": [".tif", ".tiff"],
+    "workers": 6,
+    "compute_approx_stats": true,
+    "expected_start_year": 2001,
+    "expected_end_year": 2025,
+    "expected_observations_per_year": 23,
+    "expected_band_count": 575,
+    "filename_pattern": "^EVI_Series_ID_(?P<tile_id>EU_150-X\\d{3}-Y\\d{3})_(?P<start_year>\\d{4})_(?P<end_year>\\d{4})\\.tif$",
+    "band_description_pattern": "^EVI_(?P<year>\\d{4})_(?P<month>\\d{2})_(?P<day>\\d{2})$",
+    "plausible_evi_min": -1.0,
+    "plausible_evi_max": 1.0
+  }
+}

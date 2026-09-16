@@ -1,0 +1,4 @@
+recorded_utc: 2026-09-16T19:42:55.414104+00:00
+python: 3.10.2 (tags/v3.10.2:a58ebcc, Jan 17 2022, 14:12:15) [MSC v.1929 64 bit (AMD64)]
+platform: Windows-10-10.0.20348-SP0
+gdal: GDAL 3.8.4, released 2024/02/08

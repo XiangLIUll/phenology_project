@@ -1,0 +1,3 @@
+﻿relative_path,severity,code,detail
+EVI_Series_ID_EU_150-X046-Y013_2001_2025.tif,error,missing_band_descriptions,"575 bands have blank descriptions; first=1, last=575"
+EVI_Series_ID_EU_150-X046-Y013_2001_2025.tif,error,non_modal_date_sequence,e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855

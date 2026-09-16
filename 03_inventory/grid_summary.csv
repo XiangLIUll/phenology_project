@@ -1,0 +1,2 @@
+﻿CRS,pixel_size_x,pixel_size_y,dtype,nodata,compression,grid_offset_x,grid_offset_y,raster_count
+EPSG:3035,250.0,250.0,Float32,-Infinity,DEFLATE,0.0,0.0,673

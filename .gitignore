@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Project-local runtime data
+tmp/
+12_logs/**/*.log
+04_intermediate/
+05_pheno_product/
+07_validation/reference_data/
+
+# Large or local-only files
+*.tif
+*.tiff
+*.vrt
+*.nc
+*.zarr/
+
+# Editors and operating systems
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+

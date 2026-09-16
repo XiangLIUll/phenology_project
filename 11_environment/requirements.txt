@@ -1,0 +1,3 @@
+# Stage 1-2 Python scripts use only the Python standard library.
+# GDAL/OGR command-line tools are external runtime dependencies.
+

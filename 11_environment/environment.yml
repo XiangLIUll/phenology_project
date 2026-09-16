@@ -1,0 +1,7 @@
+name: phenology-project
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - gdal=3.8
+
