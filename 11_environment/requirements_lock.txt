@@ -1,3 +1,21 @@
-# No pip-installed dependencies are required by the setup and inventory stages.
-# See software_versions.txt for the Python and GDAL versions used.
-
+affine==3.0.1
+attrs==26.1.0
+cdts==0.6.0
+click==8.4.2
+click-plugins==1.1.1.2
+cligj==0.7.2
+cloudpickle==3.1.2
+dask==2026.8.0
+fsspec==2026.7.0
+importlib-metadata==9.0.1
+locket==1.0.0
+numpy==2.2.6
+packaging==26.2
+pandas==2.3.3
+partd==1.4.2
+PyYAML==6.0.3
+rasterio==1.4.4
+scipy==1.15.3
+toolz==1.1.0
+xarray==2025.6.1
+zipp==4.1.0

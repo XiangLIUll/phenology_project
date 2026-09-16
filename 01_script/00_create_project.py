@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import importlib.metadata
 import json
 import logging
 import platform
@@ -77,6 +78,12 @@ def write_software_versions(project_root: Path, gdalinfo: Path) -> None:
         f"platform: {platform.platform()}",
         f"gdal: {command_version([str(gdalinfo), '--version'])}",
     ]
+    for package in ("cdts", "numpy", "pandas", "xarray", "dask", "rasterio", "scipy"):
+        try:
+            version = importlib.metadata.version(package)
+        except importlib.metadata.PackageNotFoundError:
+            version = "not installed"
+        lines.append(f"{package}: {version}")
     output.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -121,4 +128,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

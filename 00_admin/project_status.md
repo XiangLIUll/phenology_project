@@ -2,7 +2,8 @@
 
 ## Current stage
 
-Stage 2 — input inventory completed on 2026-09-16.
+Stage 3 — CDTS verification started; one-tile engineering benchmark completed
+on 2026-09-16.
 
 ## Completed
 
@@ -16,6 +17,8 @@ Stage 2 — input inventory completed on 2026-09-16.
   for every year from 2001 through 2025.
 - Confirmed overview-sampled EVI values are consistent with already-scaled EVI;
   the configured scale factor for the next phase should be 1.0.
+- Benchmarked CDTS 0.6.0 on tile `EU_150-X047-Y018`: 361,244 eligible pixels,
+  13 minutes 16 seconds end-to-end, and 475 eligible pixels per second.
 
 ## Blocker before CDTS verification
 
@@ -26,6 +29,6 @@ before this tile enters phenology processing.
 
 ## Next stage after blocker review
 
-Implement the CDTS API probe and synthetic ordinary-year, leap-year, year-boundary,
-and 25-year no-drift tests before any pilot or continental run.
-
+Complete the CDTS API probe and synthetic ordinary-year, leap-year, year-boundary,
+and 25-year no-drift tests. Resolve missing-observation handling and the observed
+`min_season_length` behavior before any scientific pilot or continental run.

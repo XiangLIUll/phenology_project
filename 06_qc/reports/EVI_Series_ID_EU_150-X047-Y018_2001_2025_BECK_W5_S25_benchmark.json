@@ -1,0 +1,41 @@
+{
+  "status": "complete",
+  "tile": "EVI_Series_ID_EU_150-X047-Y018_2001_2025.tif",
+  "output": "04_intermediate\\pilot\\EVI_Series_ID_EU_150-X047-Y018_2001_2025_BECK_W5_S25.tif",
+  "width": 679,
+  "height": 678,
+  "band_count": 575,
+  "total_blocks": 22,
+  "completed_blocks": 22,
+  "eligible_pixels": 361244,
+  "throughput_eligible_pixels_per_second": 475.10303110130764,
+  "timing_seconds": {
+    "read": 7.323799499987217,
+    "prepare": 8.227405800003908,
+    "compute": 760.3487588000062,
+    "write": 19.782222699999693,
+    "wall": 796.446198499998
+  },
+  "parameters": {
+    "tile": "EVI_Series_ID_EU_150-X047-Y018_2001_2025.tif",
+    "curve_type": "BECK",
+    "max_seasons": 25,
+    "apply_whittaker": true,
+    "whittaker_lambda": 5.0,
+    "apply_hants": false,
+    "min_season_length": 0,
+    "min_amplitude": 0.1,
+    "min_pixel_amplitude": 0.1,
+    "minimum_valid_observations": 100,
+    "block_rows": 32,
+    "n_jobs": 30
+  },
+  "software": {
+    "python": "3.10.2",
+    "platform": "Windows-10-10.0.20348-SP0",
+    "cdts": "0.6.0",
+    "numpy": "2.2.6",
+    "rasterio": "1.4.4"
+  },
+  "finished_utc": "2026-09-16T21:27:53.039492+00:00"
+}

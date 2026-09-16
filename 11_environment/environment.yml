@@ -4,4 +4,14 @@ channels:
 dependencies:
   - python=3.10
   - gdal=3.8
+  - numpy=2.2
+  - pandas=2.3
+  - scipy=1.15
+  - xarray=2025.6
+  - dask=2026.8
+  - rasterio=1.4
+  - pip
 
+# After creating the environment, install the pinned CDTS wheel without its
+# unrelated optional AI/STAC dependencies:
+# python -m pip install --no-deps cdts==0.6.0

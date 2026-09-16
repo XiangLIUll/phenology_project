@@ -1,3 +1,8 @@
-# Stage 1-2 Python scripts use only the Python standard library.
-# GDAL/OGR command-line tools are external runtime dependencies.
-
+# Minimal runtime for the one-tile phenology benchmark.
+# Install CDTS separately with: python -m pip install --no-deps cdts==0.6.0
+dask[array]==2026.8.0
+numpy==2.2.6
+pandas==2.3.3
+rasterio==1.4.4
+scipy==1.15.3
+xarray==2025.6.1

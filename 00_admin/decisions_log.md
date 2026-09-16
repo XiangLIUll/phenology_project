@@ -15,3 +15,21 @@
 7. **Chunking strategy:** process one source tile at a time, with smaller spatial chunks inside
    each tile if needed; checkpoint by tile and metric.
 8. **Blocking problems:** Review inventory_anomalies.csv before CDTS work.
+
+## 2026-09-16 — One-tile CDTS performance benchmark
+
+1. Selected the median-size, metadata-complete tile `EU_150-X047-Y018` rather
+   than the tile with missing band descriptions.
+2. Pinned CDTS 0.6.0 and installed only the minimal phenology runtime packages
+   in the shared A-drive environment.
+3. Used true one-based elapsed days from 2001-01-01 for the input time axis.
+4. CDTS returned no metrics when real input curves retained missing observations;
+   the benchmark therefore used full linear gap filling. This is not accepted as
+   the production missing-data policy.
+5. CDTS returned no metrics for sampled real curves when
+   `min_season_length=45`; the benchmark used zero. This behavior requires a
+   focused API/synthetic test before parameter selection.
+6. The complete 679 × 678 × 575 tile took 796.45 seconds end-to-end with 30
+   OpenMP threads and 32-row blocks. CDTS fitting accounted for 760.35 seconds.
+7. The 475-band raw sequential-season output is retained only as an ignored
+   intermediate. The tracked JSON/Markdown reports record timing and provenance.

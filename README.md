@@ -7,6 +7,11 @@ The project is currently in **Stage 2: input inventory**. No continental
 phenology processing should begin until the inventory report and its anomaly
 checks have been reviewed.
 
+A one-tile CDTS 0.6.0 engineering benchmark has also been completed. Its code
+and timing report are reproducible, but its phenology raster is an intermediate
+benchmark—not a scientific release product—because all temporal gaps were
+linearly filled and `min_season_length` was disabled after an API probe.
+
 ## Current workflow
 
 ```powershell
@@ -15,6 +20,9 @@ checks have been reviewed.
 
 & "A:\_BioGeo\liuxianx\RSdiversity\.venv\Scripts\python.exe" `
   .\01_script\01_inventory_evi.py
+
+& "A:\_BioGeo\liuxianx\RSdiversity\.venv\Scripts\python.exe" `
+  .\01_script\06_pilot_phenology.py
 ```
 
 Configuration is centralized in [`02_config/config.yaml`](02_config/config.yaml).
@@ -35,3 +43,16 @@ line tools.
 Raw EVI inputs are treated as read-only. Generated raster products and large
 intermediates are intentionally excluded from Git.
 
+## Minimal CDTS benchmark environment
+
+CDTS 0.6.0 declares several optional AI/STAC dependencies that the phenology
+benchmark does not use. Install the pinned runtime dependencies first, then
+install CDTS without its optional dependency set:
+
+```powershell
+python -m pip install -r .\11_environment\requirements.txt
+python -m pip install --no-deps cdts==0.6.0
+```
+
+The exact resolved versions used in the benchmark are recorded in
+`11_environment/requirements_lock.txt`.
