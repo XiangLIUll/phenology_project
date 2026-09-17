@@ -1,5 +1,5 @@
 # Minimal runtime for the one-tile phenology benchmark.
-# Install CDTS separately with: python -m pip install --no-deps cdts==0.6.0
+# Install CDTS separately with: python -m pip install --no-deps cdts==0.8.0
 dask[array]==2026.8.0
 numpy==2.2.6
 pandas==2.3.3

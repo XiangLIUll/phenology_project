@@ -29,7 +29,7 @@
     "apply_whittaker": true,
     "whittaker_lambda": 5.0,
     "apply_hants": false,
-    "min_season_length": 0,
+    "min_season_length": 45,
     "min_amplitude": 0.1,
     "min_pixel_amplitude": 0.1,
     "minimum_valid_observations": 100,

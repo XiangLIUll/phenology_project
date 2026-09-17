@@ -7,10 +7,9 @@ The project is currently in **Stage 2: input inventory**. No continental
 phenology processing should begin until the inventory report and its anomaly
 checks have been reviewed.
 
-A one-tile CDTS 0.6.0 engineering benchmark has also been completed. Its code
-and timing report are reproducible, but its phenology raster is an intermediate
-benchmark—not a scientific release product—because all temporal gaps were
-linearly filled and `min_season_length` was disabled after an API probe.
+A one-tile CDTS 0.8.0 engineering benchmark is included. Its code and timing
+report are reproducible, while its phenology raster remains an intermediate
+benchmark rather than a scientific release product.
 
 ## Current workflow
 
@@ -45,13 +44,13 @@ intermediates are intentionally excluded from Git.
 
 ## Minimal CDTS benchmark environment
 
-CDTS 0.6.0 declares several optional AI/STAC dependencies that the phenology
+CDTS 0.8.0 declares several optional AI/STAC dependencies that the phenology
 benchmark does not use. Install the pinned runtime dependencies first, then
 install CDTS without its optional dependency set:
 
 ```powershell
 python -m pip install -r .\11_environment\requirements.txt
-python -m pip install --no-deps cdts==0.6.0
+python -m pip install --no-deps cdts==0.8.0
 ```
 
 The exact resolved versions used in the benchmark are recorded in

@@ -1,6 +1,6 @@
 affine==3.0.1
 attrs==26.1.0
-cdts==0.6.0
+cdts==0.8.0
 click==8.4.2
 click-plugins==1.1.1.2
 cligj==0.7.2

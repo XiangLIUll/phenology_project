@@ -1,9 +1,8 @@
 """Run a restartable, one-tile CDTS phenology performance benchmark.
 
-This benchmark intentionally writes raw sequential-season outputs. It is not a
-release product: missing EVI observations are linearly filled so CDTS 0.6.0 can
-fit them, and min_season_length is zero because the installed build rejected all
-tested real curves when that filter was set to 45 days.
+This benchmark intentionally writes raw sequential-season outputs. Missing EVI
+observations are linearly filled for numerical continuity and assigned zero
+reliability weight so CDTS 0.8.0 does not treat them as observations.
 """
 
 from __future__ import annotations
@@ -45,6 +44,8 @@ METRICS = (
     "Dormancy",
     "LOS",
     "POP",
+    "R2",
+    "RMSE",
 )
 
 
@@ -68,16 +69,19 @@ def parse_dates(descriptions: tuple[str | None, ...], base_year: int) -> np.ndar
     return dates
 
 
-def fill_linear(values: np.ndarray, eligible: np.ndarray) -> np.ndarray:
-    """Linearly fill all temporal gaps for eligible pixels (benchmark only)."""
+def prepare_values_and_weights(
+    values: np.ndarray, eligible: np.ndarray
+) -> tuple[np.ndarray, np.ndarray]:
+    """Fill gaps and return zero weights for values that were originally missing."""
     selected = np.ascontiguousarray(values[eligible], dtype=np.float64)
+    weights = np.isfinite(selected).astype(np.float64)
     steps = np.arange(selected.shape[1])
     for pixel in range(selected.shape[0]):
-        finite = np.isfinite(selected[pixel])
+        finite = weights[pixel] > 0
         selected[pixel] = np.interp(
             steps, steps[finite], selected[pixel, finite]
         )
-    return selected
+    return selected, weights
 
 
 def write_json(path: Path, value: dict[str, Any]) -> None:
@@ -127,7 +131,7 @@ def render_report(summary: dict[str, Any]) -> str:
 - Tile: `{summary['tile']}`
 - Source size: {summary['width']} × {summary['height']} pixels × {summary['band_count']} dates
 - CDTS: {summary['software']['cdts']}
-- Curve: BECK; Whittaker lambda 5; maximum seasons 25
+- Curve: BECK; Whittaker lambda 5; minimum season 45 days; maximum seasons 25
 - Threads: {summary['parameters']['n_jobs']}
 - Row block: {summary['parameters']['block_rows']}
 - Eligible pixels: {summary['eligible_pixels']}
@@ -142,11 +146,10 @@ def render_report(summary: dict[str, Any]) -> str:
 
 ## Interpretation limits
 
-This run is a performance and engineering test, not a release candidate. CDTS 0.6.0
-returned no phenology for sampled real curves containing missing observations, so the
-benchmark linearly fills all gaps, including long winter gaps. The installed build also
-returned no metrics for the tested real curves when `min_season_length=45`; this benchmark
-therefore uses zero for that filter. Raw sequential seasons are written as continuous day
+This run is a performance and engineering test, not a release candidate. CDTS 0.8.0
+correctly evaluates `min_season_length=45` in elapsed calendar days. Missing values are
+linearly filled only for numerical continuity and receive zero reliability weight through
+the new `weights_array` interface. Raw sequential seasons are written as continuous day
 numbers from 2001-01-01. Leap-year and annual-assignment validation remain required.
 """
 
@@ -211,7 +214,7 @@ def main() -> int:
             "CURVE_TYPE": "BECK",
             "DATE_AXIS": "true elapsed days since 2001-01-01, one-based",
             "BENCHMARK_ONLY": "true",
-            "GAP_FILL": "linear, including leading and trailing gaps",
+            "GAP_FILL": "linear; interpolated values assigned reliability weight 0",
             "MIN_SEASON_LENGTH": str(settings["min_season_length"]),
         }
         if not output_path.exists():
@@ -256,7 +259,7 @@ def main() -> int:
                 values = np.ascontiguousarray(cube.reshape(source.count, -1).T)
                 valid_counts = np.isfinite(values).sum(axis=1)
                 eligible = valid_counts >= int(settings["minimum_valid_observations"])
-                filled = fill_linear(values, eligible)
+                filled, reliability = prepare_values_and_weights(values, eligible)
                 block_record["eligible_pixels"] = int(eligible.sum())
                 block_record["prepare_seconds"] = time.perf_counter() - tick
 
@@ -274,6 +277,8 @@ def main() -> int:
                     min_amplitude=float(settings["min_amplitude"]),
                     min_pixel_amplitude=float(settings["min_pixel_amplitude"]),
                     n_jobs=n_jobs,
+                    weights_array=reliability,
+                    season_retry=True,
                 )
                 block_record["compute_seconds"] = time.perf_counter() - tick
 

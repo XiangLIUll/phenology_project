@@ -1,8 +1,8 @@
-recorded_utc: 2026-09-16T21:29:35.353917+00:00
+recorded_utc: 2026-09-17T12:49:07.953032+00:00
 python: 3.10.2 (tags/v3.10.2:a58ebcc, Jan 17 2022, 14:12:15) [MSC v.1929 64 bit (AMD64)]
 platform: Windows-10-10.0.20348-SP0
 gdal: GDAL 3.8.4, released 2024/02/08
-cdts: 0.6.0
+cdts: 0.8.0
 numpy: 2.2.6
 pandas: 2.3.3
 xarray: 2025.6.1

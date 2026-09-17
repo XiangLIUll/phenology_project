@@ -8,13 +8,13 @@
   "total_blocks": 22,
   "completed_blocks": 22,
   "eligible_pixels": 361244,
-  "throughput_eligible_pixels_per_second": 475.10303110130764,
+  "throughput_eligible_pixels_per_second": 430.3139206818167,
   "timing_seconds": {
-    "read": 7.323799499987217,
-    "prepare": 8.227405800003908,
-    "compute": 760.3487588000062,
-    "write": 19.782222699999693,
-    "wall": 796.446198499998
+    "read": 8.163248899989412,
+    "prepare": 14.243203499965603,
+    "compute": 839.4894578999956,
+    "write": 31.132202399967355,
+    "wall": 894.0701726999978
   },
   "parameters": {
     "tile": "EVI_Series_ID_EU_150-X047-Y018_2001_2025.tif",
@@ -23,7 +23,7 @@
     "apply_whittaker": true,
     "whittaker_lambda": 5.0,
     "apply_hants": false,
-    "min_season_length": 0,
+    "min_season_length": 45,
     "min_amplitude": 0.1,
     "min_pixel_amplitude": 0.1,
     "minimum_valid_observations": 100,
@@ -33,9 +33,9 @@
   "software": {
     "python": "3.10.2",
     "platform": "Windows-10-10.0.20348-SP0",
-    "cdts": "0.6.0",
+    "cdts": "0.8.0",
     "numpy": "2.2.6",
     "rasterio": "1.4.4"
   },
-  "finished_utc": "2026-09-16T21:27:53.039492+00:00"
+  "finished_utc": "2026-09-17T12:48:21.489291+00:00"
 }

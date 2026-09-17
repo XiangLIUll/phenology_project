@@ -33,3 +33,23 @@
    OpenMP threads and 32-row blocks. CDTS fitting accounted for 760.35 seconds.
 7. The 475-band raw sequential-season output is retained only as an ignored
    intermediate. The tracked JSON/Markdown reports record timing and provenance.
+
+## 2026-09-17 — CDTS 0.8.0 replacement benchmark
+
+1. Replaced CDTS 0.6.0 with 0.8.0 after confirming that the C++ season filter
+   now compares actual elapsed dates rather than observation indices.
+2. Restored `min_season_length=45`; it now correctly represents 45 calendar
+   days for the one-based elapsed-day time axis.
+3. Updated the output contract from 19 to 21 metrics by retaining the new
+   per-season `R2` and `RMSE` diagnostics.
+4. Continued linear gap filling only for numerical continuity, while assigning
+   every originally missing observation reliability weight zero through
+   `weights_array`. Valid observations receive weight one.
+5. Replaced the old intermediate with a 525-band output tagged CDTS 0.8.0,
+   `MIN_SEASON_LENGTH=45`, and `RUN_STATUS=complete`.
+6. The corrected full-tile run processed 361,244 eligible pixels in 894.07
+   seconds: 839.49 seconds compute, 31.13 seconds write, 14.24 seconds
+   preparation, and 8.16 seconds read. Throughput was 430.31 eligible pixels
+   per second.
+7. This supersedes the CDTS 0.6.0 benchmark result. The new run was about 12%
+   slower, reflecting weighted fitting and two additional output metrics.

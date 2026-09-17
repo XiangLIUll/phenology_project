@@ -17,8 +17,11 @@ on 2026-09-16.
   for every year from 2001 through 2025.
 - Confirmed overview-sampled EVI values are consistent with already-scaled EVI;
   the configured scale factor for the next phase should be 1.0.
-- Benchmarked CDTS 0.6.0 on tile `EU_150-X047-Y018`: 361,244 eligible pixels,
-  13 minutes 16 seconds end-to-end, and 475 eligible pixels per second.
+- The initial CDTS 0.6.0 benchmark identified an observation-count/calendar-day
+  mismatch in `min_season_length`; CDTS 0.8.0 contains the confirmed fix.
+- Re-ran the complete tile with CDTS 0.8.0, `min_season_length=45` calendar days,
+  reliability weights, and 21 metrics. The corrected run processed 361,244
+  eligible pixels in 894.07 seconds (430 pixels per second).
 
 ## Blocker before CDTS verification
 
@@ -30,5 +33,5 @@ before this tile enters phenology processing.
 ## Next stage after blocker review
 
 Complete the CDTS API probe and synthetic ordinary-year, leap-year, year-boundary,
-and 25-year no-drift tests. Resolve missing-observation handling and the observed
-`min_season_length` behavior before any scientific pilot or continental run.
+and 25-year no-drift tests. Finalize missing-observation handling before any
+scientific pilot or continental run.
