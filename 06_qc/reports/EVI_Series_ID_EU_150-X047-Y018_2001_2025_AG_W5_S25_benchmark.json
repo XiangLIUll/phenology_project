@@ -1,0 +1,78 @@
+{
+  "status": "partial",
+  "tile": "EVI_Series_ID_EU_150-X047-Y018_2001_2025.tif",
+  "output": "04_intermediate\\pilot\\EVI_Series_ID_EU_150-X047-Y018_2001_2025_AG_W5_S25.tif",
+  "width": 679,
+  "height": 678,
+  "band_count": 575,
+  "start_year": 2001,
+  "end_year": 2025,
+  "total_blocks": 22,
+  "completed_blocks": 1,
+  "eligible_pixels": 3834,
+  "throughput_eligible_pixels_per_second": 2010.9636858943868,
+  "timing_seconds": {
+    "read": 1.6103676000057021,
+    "prepare": 0.20523570000659674,
+    "compute": 1.906548600003589,
+    "write": 0.653098199996748,
+    "wall": 4.549827800001367
+  },
+  "output_validation": {
+    "finite_date_values": 1654922,
+    "date_minimum": 1.0,
+    "date_maximum": 365.0,
+    "invalid_date_band_count": 0,
+    "invalid_date_bands": [],
+    "non_integer_date_band_count": 0,
+    "non_integer_date_bands": [],
+    "metrics": {
+      "LOS": {
+        "finite_values": 91941,
+        "minimum": 46.021976470947266,
+        "median": 48.131866455078125,
+        "maximum": 49.18681335449219
+      },
+      "POP": {
+        "finite_values": 91941,
+        "minimum": 1.0,
+        "median": 191.0,
+        "maximum": 359.0
+      },
+      "R2": {
+        "finite_values": 91941,
+        "minimum": -34.190284729003906,
+        "median": -1.793834924697876,
+        "maximum": 0.8582968711853027
+      },
+      "RMSE": {
+        "finite_values": 91941,
+        "minimum": 0.030367812141776085,
+        "median": 0.18547005951404572,
+        "maximum": 0.5065978765487671
+      }
+    }
+  },
+  "parameters": {
+    "tile": "EVI_Series_ID_EU_150-X047-Y018_2001_2025.tif",
+    "curve_type": "AG",
+    "max_seasons": 25,
+    "apply_whittaker": true,
+    "whittaker_lambda": 5.0,
+    "apply_hants": false,
+    "min_season_length": 45,
+    "min_amplitude": 0.1,
+    "min_pixel_amplitude": 0.1,
+    "minimum_valid_observations": 100,
+    "block_rows": 32,
+    "n_jobs": 30
+  },
+  "software": {
+    "python": "3.10.2",
+    "platform": "Windows-10-10.0.20348-SP0",
+    "cdts": "0.8.0",
+    "numpy": "2.2.6",
+    "rasterio": "1.4.4"
+  },
+  "finished_utc": "2026-09-17T14:52:42.646230+00:00"
+}

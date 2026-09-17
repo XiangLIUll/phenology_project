@@ -1,5 +1,16 @@
 # Decisions log
 
+## 2026-09-17 - Curve-model screening
+
+BECK and ELMORE were compared on the same tile with identical Whittaker,
+season-duration, amplitude, missing-data, annualization, block, and thread
+settings. ELMORE passed synthetic and real-data checks and was run for the full
+tile. It produced a slightly higher median R2 (0.951 versus 0.944) and lower
+median RMSE (0.0328 versus 0.0348 EVI), but was 56% slower and returned fewer
+finite date values. ZHANG and AG failed the fit-quality gate in synthetic or
+one-block tests and were stopped rather than expanded into misleading full-tile
+rasters. No curve model is frozen for production at this stage.
+
 ## 2026-09-17 - Annual date-output correction
 
 The first CDTS 0.8.0 benchmark wrote low-level sequential-season event dates as

@@ -52,6 +52,7 @@ DATE_METRIC_INDICES = tuple(range(17)) + (18,)
 LOS_INDEX = 17
 POP_INDEX = 18
 FIT_METRIC_INDICES = (19, 20)
+CURVE_TYPES = ("BECK", "ELMORE", "GU", "KLOS", "ZHANG", "AG", "DL")
 
 
 def load_config(path: Path) -> dict[str, Any]:
@@ -280,7 +281,7 @@ def render_report(summary: dict[str, Any]) -> str:
 - Tile: `{summary['tile']}`
 - Source size: {summary['width']} × {summary['height']} pixels × {summary['band_count']} dates
 - CDTS: {summary['software']['cdts']}
-- Curve: BECK; Whittaker lambda 5; minimum season 45 days; maximum raw seasons 25
+- Curve: {summary['parameters']['curve_type']}; Whittaker lambda {summary['parameters']['whittaker_lambda']}; minimum season {summary['parameters']['min_season_length']} days; maximum raw seasons {summary['parameters']['max_seasons']}
 - Output years: {summary['start_year']}â€“{summary['end_year']}
 - Date units: calendar day of year (DOY; 1â€“365 or 366)
 - Threads: {summary['parameters']['n_jobs']}
@@ -330,6 +331,12 @@ def parse_args() -> argparse.Namespace:
         default=Path(__file__).resolve().parents[1] / "02_config" / "config.yaml",
     )
     parser.add_argument("--tile", help="Source filename; defaults to configured benchmark tile")
+    parser.add_argument(
+        "--curve-type",
+        type=str.upper,
+        choices=CURVE_TYPES,
+        help="CDTS curve model; defaults to the configured curve_type",
+    )
     parser.add_argument("--block-rows", type=int)
     parser.add_argument("--n-jobs", type=int)
     parser.add_argument("--max-blocks", type=int, help="Stop after N new blocks for a probe")
@@ -351,10 +358,14 @@ def main() -> int:
     block_rows = args.block_rows or int(settings["block_rows"])
     n_jobs = args.n_jobs or int(settings["n_jobs"])
     max_seasons = int(settings["max_seasons"])
+    curve_type = (args.curve_type or settings["curve_type"]).upper()
+    if curve_type not in CURVE_TYPES:
+        raise ValueError(f"Unsupported curve type: {curve_type}")
     start_year = int(config["inventory"]["expected_start_year"])
     end_year = int(config["inventory"]["expected_end_year"])
     years = range(start_year, end_year + 1)
-    run_id = f"{source_path.stem}_BECK_W5_S{max_seasons}"
+    lambda_label = f"{float(settings['whittaker_lambda']):g}".replace(".", "p")
+    run_id = f"{source_path.stem}_{curve_type}_W{lambda_label}_S{max_seasons}"
     output_path = project_root / "04_intermediate" / "pilot" / f"{run_id}.tif"
     checkpoint_path = project_root / "04_intermediate" / "checkpoints" / f"{run_id}.json"
     summary_path = project_root / "06_qc" / "reports" / f"{run_id}_benchmark.json"
@@ -392,7 +403,7 @@ def main() -> int:
         total_blocks = (source.height + block_rows - 1) // block_rows
         metadata = {
             "CDTS_VERSION": importlib.metadata.version("cdts"),
-            "CURVE_TYPE": "BECK",
+            "CURVE_TYPE": curve_type,
             "DATE_AXIS": "calendar day of year, 1-365/366",
             "ANNUAL_ASSIGNMENT": (
                 "date metrics by event year; LOS/R2/RMSE by POP year; later season wins"
@@ -451,7 +462,7 @@ def main() -> int:
                 fitted = fit_phenology_batch(
                     values_array=filled,
                     dates_array=dates,
-                    curve_type=int(getattr(CurveType, settings["curve_type"])),
+                    curve_type=int(getattr(CurveType, curve_type)),
                     extraction_method=0,
                     max_seasons=max_seasons,
                     whittaker_lambda=float(settings["whittaker_lambda"]),
@@ -532,7 +543,12 @@ def main() -> int:
         "throughput_eligible_pixels_per_second": checkpoint["eligible_pixels"] / compute if compute else 0,
         "timing_seconds": timing,
         "output_validation": output_validation,
-        "parameters": {**settings, "block_rows": block_rows, "n_jobs": n_jobs},
+        "parameters": {
+            **settings,
+            "curve_type": curve_type,
+            "block_rows": block_rows,
+            "n_jobs": n_jobs,
+        },
         "software": {
             "python": sys.version.split()[0],
             "platform": platform.platform(),

@@ -2,8 +2,7 @@
 
 ## Current stage
 
-Stage 3 — CDTS verification started; one-tile engineering benchmark completed
-on 2026-09-16.
+Stage 3 — CDTS verification and one-tile curve-model sensitivity testing.
 
 ## Completed
 
@@ -20,8 +19,13 @@ on 2026-09-16.
 - The initial CDTS 0.6.0 benchmark identified an observation-count/calendar-day
   mismatch in `min_season_length`; CDTS 0.8.0 contains the confirmed fix.
 - Re-ran the complete tile with CDTS 0.8.0, `min_season_length=45` calendar days,
-  reliability weights, and 21 metrics. The corrected run processed 361,244
-  eligible pixels in 894.07 seconds (430 pixels per second).
+  reliability weights, annual DOY output, and 21 metrics. The corrected BECK run
+  processed 361,244 eligible pixels in 921.09 seconds.
+- Completed an identical-parameter ELMORE run in 1,435.96 seconds. Median R2 was
+  0.951 versus 0.944 for BECK; median RMSE was 0.0328 versus 0.0348 EVI.
+- Screened ZHANG and AG on synthetic data and one real-data block. Their poor
+  fit diagnostics prevented misleading full-tile runs.
+- Generated full-raster per-metric BECK-versus-ELMORE difference statistics.
 
 ## Blocker before CDTS verification
 

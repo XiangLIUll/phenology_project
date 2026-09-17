@@ -44,6 +44,31 @@ class PilotPhenologyTests(unittest.TestCase):
         self.assertEqual(output.shape, (21, 1, 25))
         self.assertTrue(np.isfinite(output).all())
 
+    def test_elmore_fits_annual_synthetic_seasons(self) -> None:
+        dates = 1.0 + 16.0 * np.arange(575)
+        values = (
+            0.2
+            + 0.3
+            * np.maximum(0.0, np.sin(2 * np.pi * (dates - 80.0) / 365.0))
+        )[None, :]
+        output = MODULE.fit_phenology_batch(
+            values_array=values,
+            dates_array=dates,
+            curve_type=int(MODULE.CurveType.ELMORE),
+            max_seasons=25,
+            whittaker_lambda=5.0,
+            apply_whittaker=True,
+            min_season_length=45,
+            min_amplitude=0.1,
+            min_pixel_amplitude=0.1,
+            n_jobs=1,
+            season_retry=True,
+        )
+        self.assertEqual(output.shape, (21, 1, 25))
+        self.assertTrue(np.isfinite(output).all())
+        self.assertGreater(float(np.nanmedian(output[19])), 0.9)
+        self.assertLess(float(np.nanmedian(output[20])), 0.05)
+
     def test_parse_dates_uses_true_elapsed_days_across_leap_year(self) -> None:
         values = MODULE.parse_dates(
             (

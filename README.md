@@ -27,7 +27,17 @@ used internally only and are not published as annual DOY values.
 
 & "A:\_BioGeo\liuxianx\RSdiversity\.venv\Scripts\python.exe" `
   .\01_script\06_pilot_phenology.py
+
+& "A:\_BioGeo\liuxianx\RSdiversity\.venv\Scripts\python.exe" `
+  .\01_script\06_pilot_phenology.py --curve-type ELMORE
+
+& "A:\_BioGeo\liuxianx\RSdiversity\.venv\Scripts\python.exe" `
+  .\01_script\07_parameter_sensitivity.py
 ```
+
+The completed one-tile comparison retains BECK and ELMORE as numerically valid
+pilot models under identical parameters. ZHANG and AG failed the synthetic or
+one-block fit-quality screen and were not expanded to full-tile runs.
 
 Configuration is centralized in [`02_config/config.yaml`](02_config/config.yaml).
 The file uses JSON syntax, which is valid YAML, so the setup and inventory

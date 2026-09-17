@@ -20,6 +20,15 @@ were integer DOY in the legal 1–365/366 calendar range. LOS values above 366
 days and strongly negative R2 values are retained as QC candidates rather than
 silently clipped.
 
+An identical-parameter curve-model comparison was subsequently run on the same
+tile. ELMORE completed successfully and improved the tile-wide median R2 from
+0.944 to 0.951 while reducing median RMSE from 0.0348 to 0.0328 EVI, but required
+1,435.96 seconds versus 921.09 seconds for BECK and returned fewer finite date
+values. ZHANG and AG failed synthetic or one-real-block fit-quality screening
+and were not promoted to complete-tile runs. These outcomes are engineering
+evidence only; final model selection still requires representative ecological
+strata and independent validation.
+
 ## 0. Mission
 
 Build a **fully reproducible, publication-grade pan-European land surface phenology (LSP) dataset** from the existing MODIS EVI 250 m time series for 2001–2025, using the Python package **CDTS** (`sacridini/cdts`) as the primary phenology engine.

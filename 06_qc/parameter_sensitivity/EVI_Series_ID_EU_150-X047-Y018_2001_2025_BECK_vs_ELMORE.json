@@ -1,0 +1,284 @@
+{
+  "tile": "EVI_Series_ID_EU_150-X047-Y018_2001_2025.tif",
+  "reference_model": "BECK",
+  "comparison_model": "ELMORE",
+  "controlled_parameters": {
+    "max_seasons": 25,
+    "apply_whittaker": true,
+    "whittaker_lambda": 5.0,
+    "apply_hants": false,
+    "min_season_length": 45,
+    "min_amplitude": 0.1,
+    "min_pixel_amplitude": 0.1,
+    "minimum_valid_observations": 100,
+    "block_rows": 32,
+    "n_jobs": 30
+  },
+  "runtime_seconds": {
+    "BECK": 921.0872021999967,
+    "ELMORE": 1435.9562884000043
+  },
+  "metric_comparisons": [
+    {
+      "metric": "TRS2.sos",
+      "reference_valid": 8317629,
+      "comparison_valid": 8142947,
+      "paired_values": 7997813,
+      "mean_difference": -0.7240816950798035,
+      "median_difference": 0.0,
+      "median_absolute_difference": 0.0,
+      "p05_difference": -4.0,
+      "p95_difference": 2.0
+    },
+    {
+      "metric": "TRS2.eos",
+      "reference_valid": 8258127,
+      "comparison_valid": 7994605,
+      "paired_values": 7837498,
+      "mean_difference": 0.39768698811531067,
+      "median_difference": 0.0,
+      "median_absolute_difference": 1.0,
+      "p05_difference": -6.0,
+      "p95_difference": 8.0
+    },
+    {
+      "metric": "TRS5.sos",
+      "reference_valid": 8319456,
+      "comparison_valid": 8146075,
+      "paired_values": 8002149,
+      "mean_difference": -0.011182371526956558,
+      "median_difference": 0.0,
+      "median_absolute_difference": 0.0,
+      "p05_difference": -2.0,
+      "p95_difference": 5.0
+    },
+    {
+      "metric": "TRS5.eos",
+      "reference_valid": 8272444,
+      "comparison_valid": 8053555,
+      "paired_values": 7889579,
+      "mean_difference": -0.17796805500984192,
+      "median_difference": 0.0,
+      "median_absolute_difference": 0.0,
+      "p05_difference": -12.0,
+      "p95_difference": 4.0
+    },
+    {
+      "metric": "TRS6.sos",
+      "reference_valid": 8319769,
+      "comparison_valid": 8146894,
+      "paired_values": 8003294,
+      "mean_difference": 0.16412554681301117,
+      "median_difference": 0.0,
+      "median_absolute_difference": 0.0,
+      "p05_difference": -2.0,
+      "p95_difference": 6.0
+    },
+    {
+      "metric": "TRS6.eos",
+      "reference_valid": 8273648,
+      "comparison_valid": 8061817,
+      "paired_values": 7896954,
+      "mean_difference": -0.41383349895477295,
+      "median_difference": 0.0,
+      "median_absolute_difference": 0.0,
+      "p05_difference": -15.0,
+      "p95_difference": 4.0
+    },
+    {
+      "metric": "DER.sos",
+      "reference_valid": 8319552,
+      "comparison_valid": 8147856,
+      "paired_values": 8004178,
+      "mean_difference": 0.3417207896709442,
+      "median_difference": 0.0,
+      "median_absolute_difference": 0.0,
+      "p05_difference": -2.0,
+      "p95_difference": 6.0
+    },
+    {
+      "metric": "DER.pos",
+      "reference_valid": 8321173,
+      "comparison_valid": 8145614,
+      "paired_values": 7999528,
+      "mean_difference": -2.7460989952087402,
+      "median_difference": 0.0,
+      "median_absolute_difference": 2.0,
+      "p05_difference": -31.0,
+      "p95_difference": 15.0
+    },
+    {
+      "metric": "DER.eos",
+      "reference_valid": 8274248,
+      "comparison_valid": 8053664,
+      "paired_values": 7891021,
+      "mean_difference": -0.07201869040727615,
+      "median_difference": 0.0,
+      "median_absolute_difference": 1.0,
+      "p05_difference": -16.0,
+      "p95_difference": 6.0
+    },
+    {
+      "metric": "UD",
+      "reference_valid": 8317858,
+      "comparison_valid": 8146044,
+      "paired_values": 8001396,
+      "mean_difference": -0.2057427167892456,
+      "median_difference": 0.0,
+      "median_absolute_difference": 0.0,
+      "p05_difference": -3.0,
+      "p95_difference": 3.0
+    },
+    {
+      "metric": "SD",
+      "reference_valid": 8320343,
+      "comparison_valid": 8148298,
+      "paired_values": 8004876,
+      "mean_difference": 1.0663126707077026,
+      "median_difference": 0.0,
+      "median_absolute_difference": 0.0,
+      "p05_difference": -3.0,
+      "p95_difference": 12.0
+    },
+    {
+      "metric": "DD",
+      "reference_valid": 8278858,
+      "comparison_valid": 8066854,
+      "paired_values": 7904087,
+      "mean_difference": -4.558109760284424,
+      "median_difference": 0.0,
+      "median_absolute_difference": 1.0,
+      "p05_difference": -69.0,
+      "p95_difference": 9.0
+    },
+    {
+      "metric": "RD",
+      "reference_valid": 8268657,
+      "comparison_valid": 8034243,
+      "paired_values": 7871500,
+      "mean_difference": 0.4248538315296173,
+      "median_difference": 0.0,
+      "median_absolute_difference": 1.0,
+      "p05_difference": -8.0,
+      "p95_difference": 7.0
+    },
+    {
+      "metric": "Greenup",
+      "reference_valid": 8317858,
+      "comparison_valid": 8146072,
+      "paired_values": 8001434,
+      "mean_difference": -0.2052503377199173,
+      "median_difference": 0.0,
+      "median_absolute_difference": 0.0,
+      "p05_difference": -3.0,
+      "p95_difference": 3.0
+    },
+    {
+      "metric": "Maturity",
+      "reference_valid": 8320343,
+      "comparison_valid": 8148285,
+      "paired_values": 8004857,
+      "mean_difference": 1.0657298564910889,
+      "median_difference": 0.0,
+      "median_absolute_difference": 0.0,
+      "p05_difference": -3.0,
+      "p95_difference": 12.0
+    },
+    {
+      "metric": "Senescence",
+      "reference_valid": 8278859,
+      "comparison_valid": 8066867,
+      "paired_values": 7904094,
+      "mean_difference": -4.557891368865967,
+      "median_difference": 0.0,
+      "median_absolute_difference": 1.0,
+      "p05_difference": -69.0,
+      "p95_difference": 9.0
+    },
+    {
+      "metric": "Dormancy",
+      "reference_valid": 8268657,
+      "comparison_valid": 8034236,
+      "paired_values": 7871506,
+      "mean_difference": 0.424796462059021,
+      "median_difference": 0.0,
+      "median_absolute_difference": 1.0,
+      "p05_difference": -8.0,
+      "p95_difference": 7.0
+    },
+    {
+      "metric": "LOS",
+      "reference_valid": 8321160,
+      "comparison_valid": 8145571,
+      "paired_values": 7999479,
+      "mean_difference": 0.8409254550933838,
+      "median_difference": 0.0,
+      "median_absolute_difference": 1.00274658203125,
+      "p05_difference": -22.060440063476562,
+      "p95_difference": 10.934066772460938
+    },
+    {
+      "metric": "POP",
+      "reference_valid": 8321173,
+      "comparison_valid": 8145614,
+      "paired_values": 7999528,
+      "mean_difference": -2.7460989952087402,
+      "median_difference": 0.0,
+      "median_absolute_difference": 2.0,
+      "p05_difference": -31.0,
+      "p95_difference": 15.0
+    },
+    {
+      "metric": "R2",
+      "reference_valid": 8321173,
+      "comparison_valid": 8145614,
+      "paired_values": 7999528,
+      "mean_difference": 0.0027408269234001637,
+      "median_difference": 0.00022095441818237305,
+      "median_absolute_difference": 0.001495361328125,
+      "p05_difference": -0.029751833528280258,
+      "p95_difference": 0.10334187746047974
+    },
+    {
+      "metric": "RMSE",
+      "reference_valid": 8321173,
+      "comparison_valid": 8145614,
+      "paired_values": 7999528,
+      "mean_difference": -0.0019391323439776897,
+      "median_difference": -8.742325007915497e-05,
+      "median_absolute_difference": 0.0005779638886451721,
+      "p05_difference": -0.026818057522177696,
+      "p95_difference": 0.005702195689082146
+    }
+  ],
+  "model_screening": [
+    {
+      "model": "BECK",
+      "scope": "full tile",
+      "median_r2": 0.94353187084198,
+      "median_rmse": 0.03481333702802658,
+      "decision": "retain"
+    },
+    {
+      "model": "ELMORE",
+      "scope": "full tile",
+      "median_r2": 0.9512194395065308,
+      "median_rmse": 0.032808827236294746,
+      "decision": "retain"
+    },
+    {
+      "model": "ZHANG",
+      "scope": "1 block probe",
+      "median_r2": -3710708224.0,
+      "median_rmse": 4574.16064453125,
+      "decision": "stop after probe"
+    },
+    {
+      "model": "AG",
+      "scope": "1 block probe",
+      "median_r2": -1.793834924697876,
+      "median_rmse": 0.18547005951404572,
+      "decision": "stop after probe"
+    }
+  ]
+}

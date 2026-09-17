@@ -1,0 +1,78 @@
+{
+  "status": "partial",
+  "tile": "EVI_Series_ID_EU_150-X047-Y018_2001_2025.tif",
+  "output": "04_intermediate\\pilot\\EVI_Series_ID_EU_150-X047-Y018_2001_2025_ZHANG_W5_S25.tif",
+  "width": 679,
+  "height": 678,
+  "band_count": 575,
+  "start_year": 2001,
+  "end_year": 2025,
+  "total_blocks": 22,
+  "completed_blocks": 1,
+  "eligible_pixels": 3834,
+  "throughput_eligible_pixels_per_second": 2095.8715266769655,
+  "timing_seconds": {
+    "read": 1.6102381000091555,
+    "prepare": 0.20938220000243746,
+    "compute": 1.829310600005556,
+    "write": 0.6980320000002393,
+    "wall": 4.5072241999878315
+  },
+  "output_validation": {
+    "finite_date_values": 1593175,
+    "date_minimum": 1.0,
+    "date_maximum": 366.0,
+    "invalid_date_band_count": 0,
+    "invalid_date_bands": [],
+    "non_integer_date_band_count": 0,
+    "non_integer_date_bands": [],
+    "metrics": {
+      "LOS": {
+        "finite_values": 86006,
+        "minimum": 2.0824174880981445,
+        "median": 182.5,
+        "maximum": 525.673095703125
+      },
+      "POP": {
+        "finite_values": 86029,
+        "minimum": 1.0,
+        "median": 17.0,
+        "maximum": 364.0
+      },
+      "R2": {
+        "finite_values": 85953,
+        "minimum": -101412172201984.0,
+        "median": -3710708224.0,
+        "maximum": -652509.4375
+      },
+      "RMSE": {
+        "finite_values": 85975,
+        "minimum": 168.7714080810547,
+        "median": 4574.16064453125,
+        "maximum": 8982.9560546875
+      }
+    }
+  },
+  "parameters": {
+    "tile": "EVI_Series_ID_EU_150-X047-Y018_2001_2025.tif",
+    "curve_type": "ZHANG",
+    "max_seasons": 25,
+    "apply_whittaker": true,
+    "whittaker_lambda": 5.0,
+    "apply_hants": false,
+    "min_season_length": 45,
+    "min_amplitude": 0.1,
+    "min_pixel_amplitude": 0.1,
+    "minimum_valid_observations": 100,
+    "block_rows": 32,
+    "n_jobs": 30
+  },
+  "software": {
+    "python": "3.10.2",
+    "platform": "Windows-10-10.0.20348-SP0",
+    "cdts": "0.8.0",
+    "numpy": "2.2.6",
+    "rasterio": "1.4.4"
+  },
+  "finished_utc": "2026-09-17T14:52:23.195294+00:00"
+}

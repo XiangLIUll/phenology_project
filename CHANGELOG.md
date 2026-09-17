@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-09-17 - Add curve-model sensitivity comparison
+
+- Parameterized the one-tile runner for all CDTS 0.8.0 curve enums.
+- Completed an identical-parameter ELMORE benchmark alongside BECK.
+- Added full-raster, per-metric BECK-versus-ELMORE difference statistics.
+- Recorded failed one-block ZHANG and AG fit-quality screens.
+- Added an ELMORE synthetic regression test.
+
 ## 2026-09-17 — Correct annual date output
 
 - Converted low-level CDTS cumulative event dates to leap-year-aware annual DOY.

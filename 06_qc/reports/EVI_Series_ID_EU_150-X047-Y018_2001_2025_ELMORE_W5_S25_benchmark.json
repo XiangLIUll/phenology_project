@@ -1,0 +1,78 @@
+{
+  "status": "complete",
+  "tile": "EVI_Series_ID_EU_150-X047-Y018_2001_2025.tif",
+  "output": "04_intermediate\\pilot\\EVI_Series_ID_EU_150-X047-Y018_2001_2025_ELMORE_W5_S25.tif",
+  "width": 679,
+  "height": 678,
+  "band_count": 575,
+  "start_year": 2001,
+  "end_year": 2025,
+  "total_blocks": 22,
+  "completed_blocks": 22,
+  "eligible_pixels": 361244,
+  "throughput_eligible_pixels_per_second": 263.4576691735092,
+  "timing_seconds": {
+    "read": 7.734002900047926,
+    "prepare": 12.953894099991885,
+    "compute": 1371.1652469000255,
+    "write": 43.314325200000894,
+    "wall": 1435.9562884000043
+  },
+  "output_validation": {
+    "finite_date_values": 145829540,
+    "date_minimum": 1.0,
+    "date_maximum": 366.0,
+    "invalid_date_band_count": 0,
+    "invalid_date_bands": [],
+    "non_integer_date_band_count": 0,
+    "non_integer_date_bands": [],
+    "metrics": {
+      "LOS": {
+        "finite_values": 8145571,
+        "minimum": 0.7829670310020447,
+        "median": 119.32417297363281,
+        "maximum": 744.7692260742188
+      },
+      "POP": {
+        "finite_values": 8145614,
+        "minimum": 1.0,
+        "median": 162.0,
+        "maximum": 366.0
+      },
+      "R2": {
+        "finite_values": 8145614,
+        "minimum": -47.55756378173828,
+        "median": 0.9512194395065308,
+        "maximum": 1.0
+      },
+      "RMSE": {
+        "finite_values": 8145614,
+        "minimum": 3.627743182288907e-17,
+        "median": 0.032808827236294746,
+        "maximum": 0.3259595036506653
+      }
+    }
+  },
+  "parameters": {
+    "tile": "EVI_Series_ID_EU_150-X047-Y018_2001_2025.tif",
+    "curve_type": "ELMORE",
+    "max_seasons": 25,
+    "apply_whittaker": true,
+    "whittaker_lambda": 5.0,
+    "apply_hants": false,
+    "min_season_length": 45,
+    "min_amplitude": 0.1,
+    "min_pixel_amplitude": 0.1,
+    "minimum_valid_observations": 100,
+    "block_rows": 32,
+    "n_jobs": 30
+  },
+  "software": {
+    "python": "3.10.2",
+    "platform": "Windows-10-10.0.20348-SP0",
+    "cdts": "0.8.0",
+    "numpy": "2.2.6",
+    "rasterio": "1.4.4"
+  },
+  "finished_utc": "2026-09-17T15:16:49.321887+00:00"
+}
