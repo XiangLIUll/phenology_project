@@ -3,6 +3,7 @@ from __future__ import annotations
 import importlib.util
 import sys
 import unittest
+from datetime import date
 from pathlib import Path
 
 import numpy as np
@@ -60,6 +61,25 @@ class PilotPhenologyTests(unittest.TestCase):
     def test_parse_dates_rejects_missing_description(self) -> None:
         with self.assertRaises(ValueError):
             MODULE.parse_dates((None,), 2001)
+
+    def test_annualize_converts_leap_year_dates_but_not_non_dates(self) -> None:
+        fitted = np.full((len(MODULE.METRICS), 1, 1), np.nan, dtype=np.float64)
+        base = date(2001, 1, 1)
+        leap_day = float((date(2004, 12, 31) - base).days + 1)
+        fitted[0, 0, 0] = leap_day
+        fitted[MODULE.POP_INDEX, 0, 0] = leap_day
+        fitted[MODULE.LOS_INDEX, 0, 0] = 123.5
+        fitted[19, 0, 0] = 0.91
+        fitted[20, 0, 0] = 0.03
+
+        annual = MODULE.annualize_fitted(fitted, 2001, 2001, 2005)
+
+        self.assertEqual(annual.shape, (21, 1, 5))
+        self.assertEqual(annual[0, 0, 3], 366)
+        self.assertEqual(annual[MODULE.POP_INDEX, 0, 3], 366)
+        self.assertEqual(annual[MODULE.LOS_INDEX, 0, 3], 123.5)
+        self.assertAlmostEqual(float(annual[19, 0, 3]), 0.91, places=6)
+        self.assertAlmostEqual(float(annual[20, 0, 3]), 0.03, places=6)
 
 
 if __name__ == "__main__":

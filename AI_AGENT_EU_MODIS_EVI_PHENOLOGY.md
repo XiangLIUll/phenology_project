@@ -1,5 +1,25 @@
 # AI Agent Task — Pan-European MODIS EVI Land Surface Phenology, 2001–2025
 
+## Current implementation note — 2026-09-17
+
+The CDTS 0.8.0 low-level API returns event dates as one-based continuous days
+from the configured base year. These raw values are valid internal coordinates
+but must not be published as annual day of year (DOY), because later years
+naturally have values in the thousands.
+
+The pilot workflow now converts all date metrics to leap-year-aware calendar DOY
+(1–365/366) and names bands by calendar year. Date metrics are assigned by the
+event's actual year; LOS remains a duration in days; R2 and RMSE retain their
+native values and are assigned by POP year. If more than one detected season
+maps the same metric to the same year, the later detected season wins, matching
+CDTS 0.8.0 annualization behavior. This tie rule remains a pilot choice and must
+be evaluated in the required multi-season sensitivity analysis before release.
+
+The corrected one-tile benchmark checked 149,368,652 finite date values. All
+were integer DOY in the legal 1–365/366 calendar range. LOS values above 366
+days and strongly negative R2 values are retained as QC candidates rather than
+silently clipped.
+
 ## 0. Mission
 
 Build a **fully reproducible, publication-grade pan-European land surface phenology (LSP) dataset** from the existing MODIS EVI 250 m time series for 2001–2025, using the Python package **CDTS** (`sacridini/cdts`) as the primary phenology engine.

@@ -1,5 +1,18 @@
 # Decisions log
 
+## 2026-09-17 - Annual date-output correction
+
+The first CDTS 0.8.0 benchmark wrote low-level sequential-season event dates as
+one-based elapsed days since 2001-01-01. Those values are valid internal CDTS
+coordinates but are not annual DOY and can exceed 9,000 over 2001-2025.
+
+The pilot now converts date metrics to leap-year-aware calendar DOY and assigns
+them by the event's actual calendar year. LOS remains a duration. R2 and RMSE are
+assigned using the corresponding season's POP year. If more than one raw season
+maps the same metric to the same year, the later detected season wins, matching
+CDTS 0.8.0 annualization behavior. Multi-season handling must still be tested
+before the production parameter set is frozen.
+
 ## 2026-09-16T19:51:31.097830+00:00 — Initial EVI inventory
 
 1. **Source structure:** 673 spatial GeoTIFF stacks; each file stores the full

@@ -1,8 +1,8 @@
-"""Run a restartable, one-tile CDTS phenology performance benchmark.
+"""Run a restartable, one-tile annual CDTS phenology benchmark.
 
-This benchmark intentionally writes raw sequential-season outputs. Missing EVI
-observations are linearly filled for numerical continuity and assigned zero
-reliability weight so CDTS 0.8.0 does not treat them as observations.
+Missing EVI observations are linearly filled for numerical continuity and
+assigned zero reliability weight. Raw CDTS event dates are converted from a
+continuous multi-year axis to calendar-year day of year (DOY) before writing.
 """
 
 from __future__ import annotations
@@ -48,6 +48,11 @@ METRICS = (
     "RMSE",
 )
 
+DATE_METRIC_INDICES = tuple(range(17)) + (18,)
+LOS_INDEX = 17
+POP_INDEX = 18
+FIT_METRIC_INDICES = (19, 20)
+
 
 def load_config(path: Path) -> dict[str, Any]:
     with path.open("r", encoding="utf-8") as stream:
@@ -84,6 +89,83 @@ def prepare_values_and_weights(
     return selected, weights
 
 
+def continuous_days_to_year_doy(
+    values: np.ndarray, base_year: int
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Convert one-based continuous days to calendar year and integer DOY."""
+    finite = np.isfinite(values) & (values > 0)
+    years = np.full(values.shape, -1, dtype=np.int32)
+    doys = np.full(values.shape, np.nan, dtype=np.float32)
+    if not np.any(finite):
+        return years, doys, finite
+
+    epoch = np.datetime64(f"{base_year}-01-01", "D")
+    day_offsets = np.floor(values[finite]).astype(np.int64) - 1
+    event_dates = epoch + day_offsets.astype("timedelta64[D]")
+    event_year_starts = event_dates.astype("datetime64[Y]")
+    years[finite] = event_year_starts.astype(np.int64) + 1970
+    doys[finite] = (event_dates - event_year_starts).astype(np.int64) + 1
+    return years, doys, finite
+
+
+def annualize_fitted(
+    fitted: np.ndarray,
+    base_year: int,
+    start_year: int,
+    end_year: int,
+) -> np.ndarray:
+    """Map raw sequential CDTS seasons to annual DOY and non-date values.
+
+    Date metrics are assigned to the calendar year in which each event occurs.
+    LOS, R2, and RMSE are assigned to the year of that season's POP. If CDTS
+    detects more than one event for the same metric and year, the later raw
+    season wins, matching CDTS 0.8.0's annualization behavior.
+    """
+    if fitted.ndim != 3 or fitted.shape[0] != len(METRICS):
+        raise ValueError(
+            f"Expected ({len(METRICS)}, pixels, seasons), got {fitted.shape}"
+        )
+
+    year_count = end_year - start_year + 1
+    annual = np.full(
+        (len(METRICS), fitted.shape[1], year_count), np.nan, dtype=np.float32
+    )
+    pixel_indices = np.arange(fitted.shape[1])
+    pop_years, _, valid_pop = continuous_days_to_year_doy(
+        fitted[POP_INDEX], base_year
+    )
+
+    for season_index in range(fitted.shape[2]):
+        for metric_index in DATE_METRIC_INDICES:
+            event_years, event_doys, valid_event = continuous_days_to_year_doy(
+                fitted[metric_index, :, season_index], base_year
+            )
+            year_indices = event_years - start_year
+            keep = valid_event & (year_indices >= 0) & (year_indices < year_count)
+            annual[
+                metric_index,
+                pixel_indices[keep],
+                year_indices[keep],
+            ] = event_doys[keep]
+
+        pop_year_indices = pop_years[:, season_index] - start_year
+        keep_season = (
+            valid_pop[:, season_index]
+            & (pop_year_indices >= 0)
+            & (pop_year_indices < year_count)
+        )
+        for metric_index in (LOS_INDEX, *FIT_METRIC_INDICES):
+            metric_values = fitted[metric_index, :, season_index]
+            keep = keep_season & np.isfinite(metric_values)
+            annual[
+                metric_index,
+                pixel_indices[keep],
+                pop_year_indices[keep],
+            ] = metric_values[keep]
+
+    return annual
+
+
 def write_json(path: Path, value: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(path.suffix + ".tmp")
@@ -91,16 +173,79 @@ def write_json(path: Path, value: dict[str, Any]) -> None:
     temporary.replace(path)
 
 
+def validate_output(output_path: Path, start_year: int, end_year: int) -> dict[str, Any]:
+    """Validate annual units and summarize non-date metric ranges."""
+    years = list(range(start_year, end_year + 1))
+    year_count = len(years)
+    invalid_date_bands: list[dict[str, Any]] = []
+    non_integer_date_bands: list[str] = []
+    finite_date_values = 0
+    date_min = np.inf
+    date_max = -np.inf
+
+    with rasterio.open(output_path) as source:
+        for metric_index in DATE_METRIC_INDICES:
+            for year_index, year in enumerate(years):
+                band = metric_index * year_count + year_index + 1
+                values = source.read(band, out_dtype="float64")
+                finite = values[np.isfinite(values)]
+                if finite.size == 0:
+                    continue
+                lower = float(finite.min())
+                upper = float(finite.max())
+                limit = date(year, 12, 31).timetuple().tm_yday
+                finite_date_values += int(finite.size)
+                date_min = min(date_min, lower)
+                date_max = max(date_max, upper)
+                if lower < 1 or upper > limit:
+                    invalid_date_bands.append(
+                        {
+                            "band": source.descriptions[band - 1],
+                            "minimum": lower,
+                            "maximum": upper,
+                            "allowed_maximum": limit,
+                        }
+                    )
+                if not np.all(finite == np.floor(finite)):
+                    non_integer_date_bands.append(source.descriptions[band - 1])
+
+        metric_summaries: dict[str, dict[str, float | int]] = {}
+        for metric_index in (LOS_INDEX, POP_INDEX, *FIT_METRIC_INDICES):
+            pieces = []
+            for year_index in range(year_count):
+                band = metric_index * year_count + year_index + 1
+                values = source.read(band, out_dtype="float64")
+                pieces.append(values[np.isfinite(values)])
+            finite = np.concatenate(pieces)
+            metric_summaries[METRICS[metric_index]] = {
+                "finite_values": int(finite.size),
+                "minimum": float(finite.min()) if finite.size else np.nan,
+                "median": float(np.median(finite)) if finite.size else np.nan,
+                "maximum": float(finite.max()) if finite.size else np.nan,
+            }
+
+    return {
+        "finite_date_values": finite_date_values,
+        "date_minimum": float(date_min) if finite_date_values else np.nan,
+        "date_maximum": float(date_max) if finite_date_values else np.nan,
+        "invalid_date_band_count": len(invalid_date_bands),
+        "invalid_date_bands": invalid_date_bands,
+        "non_integer_date_band_count": len(non_integer_date_bands),
+        "non_integer_date_bands": non_integer_date_bands,
+        "metrics": metric_summaries,
+    }
+
+
 def initialize_output(
     source: rasterio.io.DatasetReader,
     output_path: Path,
-    max_seasons: int,
+    years: range,
     metadata: dict[str, str],
 ) -> None:
     profile = source.profile.copy()
     profile.update(
         driver="GTiff",
-        count=len(METRICS) * max_seasons,
+        count=len(METRICS) * len(years),
         dtype="float32",
         nodata=np.nan,
         compress="ZSTD",
@@ -115,9 +260,9 @@ def initialize_output(
         destination.update_tags(RUN_STATUS="partial", **metadata)
         band = 1
         for metric in METRICS:
-            for season in range(1, max_seasons + 1):
+            for year in years:
                 destination.set_band_description(
-                    band, f"{metric.replace('.', '_')}_season_{season:02d}"
+                    band, f"{metric.replace('.', '_')}_{year}"
                 )
                 band += 1
 
@@ -125,13 +270,19 @@ def initialize_output(
 def render_report(summary: dict[str, Any]) -> str:
     totals = summary["timing_seconds"]
     status = summary["status"]
+    validation = summary["output_validation"]
+    los = validation["metrics"]["LOS"]
+    r2 = validation["metrics"]["R2"]
+    rmse = validation["metrics"]["RMSE"]
     return f"""# One-tile CDTS phenology benchmark
 
 - Status: **{status}**
 - Tile: `{summary['tile']}`
 - Source size: {summary['width']} × {summary['height']} pixels × {summary['band_count']} dates
 - CDTS: {summary['software']['cdts']}
-- Curve: BECK; Whittaker lambda 5; minimum season 45 days; maximum seasons 25
+- Curve: BECK; Whittaker lambda 5; minimum season 45 days; maximum raw seasons 25
+- Output years: {summary['start_year']}â€“{summary['end_year']}
+- Date units: calendar day of year (DOY; 1â€“365 or 366)
 - Threads: {summary['parameters']['n_jobs']}
 - Row block: {summary['parameters']['block_rows']}
 - Eligible pixels: {summary['eligible_pixels']}
@@ -144,13 +295,30 @@ def render_report(summary: dict[str, Any]) -> str:
 - Throughput: {summary['throughput_eligible_pixels_per_second']:.2f} eligible pixels s⁻¹
 - Output: `{summary['output']}`
 
+## Annual-output validation
+
+- Finite date values checked: {validation['finite_date_values']:,}
+- Observed date range: {validation['date_minimum']:.0f}-{validation['date_maximum']:.0f} DOY
+- Date bands outside their calendar-year range: {validation['invalid_date_band_count']}
+- Date bands containing non-integer DOY: {validation['non_integer_date_band_count']}
+- LOS: minimum {los['minimum']:.2f}, median {los['median']:.2f}, maximum {los['maximum']:.2f} days
+- R2: minimum {r2['minimum']:.3f}, median {r2['median']:.3f}, maximum {r2['maximum']:.3f}
+- RMSE: minimum {rmse['minimum']:.4f}, median {rmse['median']:.4f}, maximum {rmse['maximum']:.4f} EVI
+
+LOS values above 366 days and strongly negative R2 values are retained as transparent
+QC candidates; they are not silently clipped or converted.
+
 ## Interpretation limits
 
 This run is a performance and engineering test, not a release candidate. CDTS 0.8.0
 correctly evaluates `min_season_length=45` in elapsed calendar days. Missing values are
 linearly filled only for numerical continuity and receive zero reliability weight through
-the new `weights_array` interface. Raw sequential seasons are written as continuous day
-numbers from 2001-01-01. Leap-year and annual-assignment validation remain required.
+the `weights_array` interface. Date metrics are assigned to their event calendar year and
+written as leap-year-aware integer DOY. LOS remains a duration in days. R2 and RMSE retain
+their native dimensionless and EVI units and are assigned by the season's POP year. When
+multiple raw seasons contribute the same metric in one year, the later detected season
+wins, matching CDTS 0.8.0 annualization behavior. Multi-season sensitivity remains required
+before production.
 """
 
 
@@ -183,12 +351,19 @@ def main() -> int:
     block_rows = args.block_rows or int(settings["block_rows"])
     n_jobs = args.n_jobs or int(settings["n_jobs"])
     max_seasons = int(settings["max_seasons"])
+    start_year = int(config["inventory"]["expected_start_year"])
+    end_year = int(config["inventory"]["expected_end_year"])
+    years = range(start_year, end_year + 1)
     run_id = f"{source_path.stem}_BECK_W5_S{max_seasons}"
     output_path = project_root / "04_intermediate" / "pilot" / f"{run_id}.tif"
     checkpoint_path = project_root / "04_intermediate" / "checkpoints" / f"{run_id}.json"
     summary_path = project_root / "06_qc" / "reports" / f"{run_id}_benchmark.json"
     report_path = project_root / "06_qc" / "reports" / f"{run_id}_benchmark.md"
     log_path = project_root / "12_logs" / "pilot" / f"{run_id}.log"
+    raster_sidecars = (
+        Path(f"{output_path}.aux.xml"),
+        Path(f"{output_path}.ovr"),
+    )
     log_path.parent.mkdir(parents=True, exist_ok=True)
     logging.basicConfig(
         level=logging.INFO,
@@ -197,7 +372,13 @@ def main() -> int:
     )
 
     if args.overwrite:
-        for path in (output_path, checkpoint_path, summary_path, report_path):
+        for path in (
+            output_path,
+            *raster_sidecars,
+            checkpoint_path,
+            summary_path,
+            report_path,
+        ):
             if path.exists():
                 path.unlink()
     elif output_path.exists() != checkpoint_path.exists():
@@ -212,13 +393,16 @@ def main() -> int:
         metadata = {
             "CDTS_VERSION": importlib.metadata.version("cdts"),
             "CURVE_TYPE": "BECK",
-            "DATE_AXIS": "true elapsed days since 2001-01-01, one-based",
+            "DATE_AXIS": "calendar day of year, 1-365/366",
+            "ANNUAL_ASSIGNMENT": (
+                "date metrics by event year; LOS/R2/RMSE by POP year; later season wins"
+            ),
             "BENCHMARK_ONLY": "true",
             "GAP_FILL": "linear; interpolated values assigned reliability weight 0",
             "MIN_SEASON_LENGTH": str(settings["min_season_length"]),
         }
         if not output_path.exists():
-            initialize_output(source, output_path, max_seasons, metadata)
+            initialize_output(source, output_path, years, metadata)
             checkpoint: dict[str, Any] = {
                 "run_id": run_id,
                 "completed_block_starts": [],
@@ -283,18 +467,26 @@ def main() -> int:
                 block_record["compute_seconds"] = time.perf_counter() - tick
 
                 tick = time.perf_counter()
-                flat_output = np.full(
-                    (len(METRICS) * max_seasons, values.shape[0]), np.nan, dtype=np.float32
+                annual = annualize_fitted(
+                    fitted,
+                    base_year=start_year,
+                    start_year=start_year,
+                    end_year=end_year,
                 )
-                flat_output[:, eligible] = fitted.transpose(0, 2, 1).reshape(
-                    len(METRICS) * max_seasons, -1
+                flat_output = np.full(
+                    (len(METRICS) * len(years), values.shape[0]),
+                    np.nan,
+                    dtype=np.float32,
+                )
+                flat_output[:, eligible] = annual.transpose(0, 2, 1).reshape(
+                    len(METRICS) * len(years), -1
                 )
                 output_block = flat_output.reshape(
-                    len(METRICS) * max_seasons, row_count, source.width
+                    len(METRICS) * len(years), row_count, source.width
                 )
                 destination.write(output_block, window=window)
                 block_record["write_seconds"] = time.perf_counter() - tick
-                block_record["finite_output_values"] = int(np.isfinite(fitted).sum())
+                block_record["finite_output_values"] = int(np.isfinite(annual).sum())
 
                 checkpoint["completed_block_starts"].append(row_start)
                 checkpoint["blocks"].append(block_record)
@@ -324,6 +516,7 @@ def main() -> int:
     write_json(checkpoint_path, checkpoint)
     timing = {**checkpoint["timing_seconds"], "wall": checkpoint["wall_seconds"]}
     compute = timing["compute"]
+    output_validation = validate_output(output_path, start_year, end_year)
     summary = {
         "status": "complete" if is_complete else "partial",
         "tile": tile_name,
@@ -331,11 +524,14 @@ def main() -> int:
         "width": source.width,
         "height": source.height,
         "band_count": source.count,
+        "start_year": start_year,
+        "end_year": end_year,
         "total_blocks": total_blocks,
         "completed_blocks": len(checkpoint["completed_block_starts"]),
         "eligible_pixels": checkpoint["eligible_pixels"],
         "throughput_eligible_pixels_per_second": checkpoint["eligible_pixels"] / compute if compute else 0,
         "timing_seconds": timing,
+        "output_validation": output_validation,
         "parameters": {**settings, "block_rows": block_rows, "n_jobs": n_jobs},
         "software": {
             "python": sys.version.split()[0],

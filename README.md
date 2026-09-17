@@ -11,6 +11,11 @@ A one-tile CDTS 0.8.0 engineering benchmark is included. Its code and timing
 report are reproducible, while its phenology raster remains an intermediate
 benchmark rather than a scientific release product.
 
+The pilot GeoTIFF stores date metrics as leap-year-aware calendar day of year
+(DOY 1-365/366) in bands named by calendar year. LOS is a duration in days;
+R2 and RMSE retain their native units. Raw CDTS cumulative day coordinates are
+used internally only and are not published as annual DOY values.
+
 ## Current workflow
 
 ```powershell

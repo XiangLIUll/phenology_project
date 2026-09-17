@@ -5,16 +5,53 @@
   "width": 679,
   "height": 678,
   "band_count": 575,
+  "start_year": 2001,
+  "end_year": 2025,
   "total_blocks": 22,
   "completed_blocks": 22,
   "eligible_pixels": 361244,
-  "throughput_eligible_pixels_per_second": 430.3139206818167,
+  "throughput_eligible_pixels_per_second": 423.78599765800044,
   "timing_seconds": {
-    "read": 8.163248899989412,
-    "prepare": 14.243203499965603,
-    "compute": 839.4894578999956,
-    "write": 31.132202399967355,
-    "wall": 894.0701726999978
+    "read": 8.198829800036037,
+    "prepare": 13.90419279994967,
+    "compute": 852.4208019999933,
+    "write": 45.63539119999041,
+    "wall": 921.0872021999967
+  },
+  "output_validation": {
+    "finite_date_values": 149368652,
+    "date_minimum": 1.0,
+    "date_maximum": 366.0,
+    "invalid_date_band_count": 0,
+    "invalid_date_bands": [],
+    "non_integer_date_band_count": 0,
+    "non_integer_date_bands": [],
+    "metrics": {
+      "LOS": {
+        "finite_values": 8321160,
+        "minimum": 0.9670329689979553,
+        "median": 119.9120864868164,
+        "maximum": 769.3104248046875
+      },
+      "POP": {
+        "finite_values": 8321173,
+        "minimum": 1.0,
+        "median": 165.0,
+        "maximum": 366.0
+      },
+      "R2": {
+        "finite_values": 8321173,
+        "minimum": -17.16065216064453,
+        "median": 0.94353187084198,
+        "maximum": 1.0
+      },
+      "RMSE": {
+        "finite_values": 8321173,
+        "minimum": 0.0,
+        "median": 0.03481333702802658,
+        "maximum": 0.3170474171638489
+      }
+    }
   },
   "parameters": {
     "tile": "EVI_Series_ID_EU_150-X047-Y018_2001_2025.tif",
@@ -37,5 +74,5 @@
     "numpy": "2.2.6",
     "rasterio": "1.4.4"
   },
-  "finished_utc": "2026-09-17T12:48:21.489291+00:00"
+  "finished_utc": "2026-09-17T13:24:31.391076+00:00"
 }

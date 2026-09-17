@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-09-17 — Correct annual date output
+
+- Converted low-level CDTS cumulative event dates to leap-year-aware annual DOY.
+- Replaced sequential-season band labels with metric-and-calendar-year labels.
+- Preserved LOS, R2, and RMSE in their correct non-date units.
+- Added annual-output range validation and a leap-year regression test.
+- Recomputed and validated the complete one-tile benchmark raster.
+
 ## v0.1.0 - 2026-09-16
 
 - Initialized the reproducible project structure.
